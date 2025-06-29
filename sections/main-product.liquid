@@ -462,7 +462,13 @@
                 %}
 
               {%- when 'variant_picker' -%}
-                {% render 'product-variant-picker', product: product, block: block, product_form_id: product_form_id %}
+
+                {% comment %} Custom picker - Renders component but does not update main product image {% endcomment %}
+                {% render 'variant-picker', product:product %}
+               
+              {% render 'product-variant-picker', product: product, block: block, product_form_id: product_form_id %}
+              
+
               {%- when 'buy_buttons' -%}
                 {%- render 'buy-buttons',
                   block: block,

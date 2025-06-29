@@ -1,0 +1,127 @@
+<!-- snippets/variant-picker.liquid -->
+
+<script src="{{ 'variant-picker.js' | asset_url }}" defer></script>
+
+<div class="custom-variant-picker">
+  {%- comment -%}
+    Your task:
+    Build the color selector UI here using Shopify's variant data.
+    Replicate the behavior and responsiveness from:
+    https://dfyne.com/collections/defy/products/dfyne-defy-red-crop-top-250401
+  {%- endcomment -%}
+
+  {% comment %}
+    HINT: You can use `product.variants`, `variant.option1`, or loop through `product.options_with_values`
+  {% endcomment %}
+
+  <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+  <variant-selects>
+    <fieldset class="variant-container">
+      {% for options in product.variants %}
+        <div class="variant-card" data-variant-id="{{ options.id }}">
+          <div class="variant-image">
+            <img id="card-image" src="{{ options.image.src | image_url }}" width="66px" height="99px">
+          </div>
+          <div class="variant-info">
+            <p>{{ options.title }}</p>
+          </div>
+        </div>
+      {% endfor %}
+    </fieldset>
+  </variant-selects>
+
+  <script type="application/json" data-selected-variant>
+    {{ product.selected_or_first_available_variant | json }}
+  </script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const variantCards = document.querySelectorAll('.variant-card');
+      const image = document.getElementById('product media');
+
+      variantCards.forEach(function (card) {
+        card.addEventListener('click', function (event) {
+          const selectedVariantId = event.currentTarget.dataset.variantId;
+          const selectedImageSrc = event.currentTarget.querySelector('img').src;
+
+          variantCards.forEach(function (c) {
+            c.classList.remove('active');
+          });
+          event.currentTarget.classList.add('active');
+          document.querySelector('input[name="id"]').value = selectedVariantId;
+          image.src = selectedImageSrc;
+          console.log('Selected VariantID:', selectedVariantId);
+
+          console.log('Card clicked');
+        });
+      });
+    });
+  </script>
+</div>
+
+<style>
+  fieldset {
+    border: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .custom-variant-picker {
+    display: flex;
+    overflow-x: auto;
+    max-width: 600px;
+    min-width: 500px;
+    padding-bottom: 8px;
+  }
+
+  .variant-container {
+    display: flex;
+    gap: 1rem;
+    margin: 0;
+    padding: 0;
+  }
+
+  .variant-card {
+    width: 100px;
+    cursor: pointer;
+    text-align: left;
+    border-radius: 8px;
+
+    background: white;
+  }
+
+  .variant-card img {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-top-right-radius: 10px;
+    border-top-left-radius: 10px;
+  }
+
+  .variant-card p {
+    font-size: 1.3rem;
+    margin: 8px 0 0 10px;
+    color: #333;
+    transition: 0.3s;
+  }
+
+  .variant-card:hover,
+  .variant-card.active {
+    box-shadow: 0 8px 10px -8px black;
+    transition: 0.5s;
+  }
+
+  .variant-info {
+    background-color: white;
+    padding: 2px 2px 0 0;
+    border-radius: 0 0 10px 10px;
+  }
+
+  .variant-card.active .variant-info {
+    background-color: black;
+  }
+
+  .variant-card.active p {
+    color: #fff;
+  }
+</style>
